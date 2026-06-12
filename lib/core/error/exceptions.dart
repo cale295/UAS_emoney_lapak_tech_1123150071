@@ -27,3 +27,8 @@ class InsufficientBalanceException implements Exception {
   final double? amount;
   const InsufficientBalanceException(this.message, {this.balance, this.amount});
 }
+
+class CacheException implements Exception {
+  final String message;
+  const CacheException([this.message = 'Gagal mengakses storage.']);
+}
