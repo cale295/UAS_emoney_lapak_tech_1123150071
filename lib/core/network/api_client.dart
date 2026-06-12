@@ -41,4 +41,30 @@ class ApiClient {
     void clearAuthToken() {
         _dio.options.headers.remove('Authorization');
     }
+    Future<Map<String, dynamic>> get(String path) async {
+        try {
+            final response = await _dio.get(path);
+            return _handleResponse(response);
+        } on DioException catch (e) {
+            throw _handleDioError(e);
+        }
+    }
+
+    Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? data}) async {
+        try {
+            final response = await _dio.post(path, data: data);
+            return _handleResponse(response);
+        } on DioException catch (e) {
+            throw _handleDioError(e);
+        }
+    }
+
+    Future<Map<String, dynamic>> put(String path, {Map<String, dynamic>? data}) async {
+        try {
+            final response = await _dio.put(path, data: data);
+            return _handleResponse(response);
+        } on DioException catch (e) {
+            throw _handleDioError(e);
+        }
+    }
 }
