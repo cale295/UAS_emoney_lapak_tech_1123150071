@@ -4,3 +4,8 @@ class ServerException implements Exception {
   final int? statusCode;
   const ServerException(this.message, {this.errorCode, this.statusCode});
 }
+
+class NetworkException implements Exception {
+  final String message;
+  const NetworkException([this.message = 'Tidak ada koneksi internet.']);
+}
