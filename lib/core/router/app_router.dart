@@ -80,6 +80,54 @@ class AppRouter {
               GoRoute(path: '/akun', builder: (_, __) => const AccountPage()),
             ],
           ),
+          GoRoute(path: '/topup', builder: (_, __) => _withPayment(const TopUpPage())),
+          GoRoute(path: '/transfer', builder: (_, __) => const TransferPage()),
+          GoRoute(
+            path: '/transfer/amount',
+            builder: (_, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return _withAccount(TransferAmountPage(
+                recipient: extra['recipient'] as Map<String, dynamic>,
+                channel: extra['channel'] as String,
+              ));
+            },
+          ),
+          GoRoute(
+            path: '/transfer/confirm',
+            builder: (_, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return TransferConfirmPage(
+                recipient: extra['recipient'] as Map<String, dynamic>,
+                channel: extra['channel'] as String,
+                amount: (extra['amount'] as num).toDouble(),
+                note: extra['note'] as String? ?? '',
+                fee: (extra['fee'] as num? ?? 0).toDouble(),
+              );
+            },
+          ),
+          GoRoute(path: '/payment', builder: (_, __) => const PaymentQrPage()),
+          GoRoute(
+            path: '/pin',
+            builder: (_, state) {
+              final extra = (state.extra as Map<String, dynamic>?) ?? {};
+              return _withPayment(PinPage(flowData: extra));
+            },
+          ),
+          GoRoute(
+            path: '/success',
+            builder: (_, state) {
+              final extra = (state.extra as Map<String, dynamic>?) ?? {};
+              return _withAccount(SuccessPage(
+                title: extra['title'] as String? ?? 'Berhasil',
+                subtitle: extra['subtitle'] as String? ?? '',
+                amount: (extra['amount'] as num? ?? 0).toDouble(),
+                lines: (extra['lines'] as List<dynamic>?)
+                    ?.map((l) => (l as List<dynamic>).map((e) => e.toString()).toList())
+                    .toList() ?? [],
+              ));
+            },
+          ),
+          GoRoute(path: '/merchant', builder: (_, __) => _withPayment(const MerchantCheckoutPage())),
         ],
     );
 }
