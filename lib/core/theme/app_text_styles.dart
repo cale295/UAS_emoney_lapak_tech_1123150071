@@ -56,4 +56,16 @@ class AppTextStyles {
         fontWeight: FontWeight.w500,
         color: AppColors.ink,
     );
+    static const TextStyle bodyMd = TextStyle(
+        fontFamily: _font,
+        fontSize: 14.5,
+        fontWeight: FontWeight.w500,
+        color: AppColors.ink,
+    );
+    static const TextStyle bodySm = TextStyle(
+        fontFamily: _font,
+        fontSize: 13.5,
+        fontWeight: FontWeight.w500,
+        color: AppColors.slate500,
+    );
 }
