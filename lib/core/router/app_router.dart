@@ -46,6 +46,40 @@ class AppRouter {
               return _withOtp(TwoFANotifPage(mode: extra?['mode'] as String? ?? 'login'));
             },
           ),
+          ShellRoute(
+            builder: (context, state, child) {
+              final location = state.matchedLocation;
+              final tab = location.contains('history')
+                  ? 'history'
+                  : location.contains('promo')
+                      ? 'promo'
+                      : location.contains('akun')
+                          ? 'akun'
+                          : 'home';
+
+              return _withAccount(Scaffold(
+                body: child,
+                bottomNavigationBar: AppTabBar(
+                  active: tab,
+                  onTab: (t) {
+                    switch (t) {
+                      case 'history': context.go('/history'); break;
+                      case 'promo': context.go('/promo'); break;
+                      case 'akun': context.go('/akun'); break;
+                      default: context.go('/home');
+                    }
+                  },
+                  onScan: () => context.go('/payment'),
+                ),
+              ));
+            },
+            routes: [
+              GoRoute(path: '/home', builder: (_, __) => const HomePage()),
+              GoRoute(path: '/history', builder: (_, __) => const HistoryPage()),
+              GoRoute(path: '/promo', builder: (_, __) => const PromoPage()),
+              GoRoute(path: '/akun', builder: (_, __) => const AccountPage()),
+            ],
+          ),
         ],
     );
 }
