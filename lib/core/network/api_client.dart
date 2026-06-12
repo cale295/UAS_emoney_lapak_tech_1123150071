@@ -33,4 +33,12 @@ class ApiClient {
             },
         ));
     }
+
+    void setAuthToken(String token) {
+        _dio.options.headers['Authorization'] = 'Bearer $token';
+    }
+
+    void clearAuthToken() {
+        _dio.options.headers.remove('Authorization');
+    }
 }
