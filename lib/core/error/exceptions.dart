@@ -20,3 +20,10 @@ class InvalidOtpException implements Exception {
   final String message;
   const InvalidOtpException([this.message = 'Kode OTP tidak valid.']);
 }
+
+class InsufficientBalanceException implements Exception {
+  final String message;
+  final double? balance;
+  final double? amount;
+  const InsufficientBalanceException(this.message, {this.balance, this.amount});
+}
