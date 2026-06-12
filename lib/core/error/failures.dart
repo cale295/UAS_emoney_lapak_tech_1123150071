@@ -44,3 +44,7 @@ class InsufficientBalanceFailure extends Failure {
   @override
   List<Object?> get props => [message, balance, amount];
 }
+
+class CacheFailure extends Failure {
+  const CacheFailure([super.message = 'Gagal mengakses penyimpanan lokal.']);
+}
