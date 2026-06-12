@@ -36,4 +36,30 @@ class AppColors {
     stops: [0.0, 0.55, 1.0],
     colors: [primaryLight, primary, primaryDark],
   );
+
+  // Shadows
+  static List<BoxShadow> shadowCard = [
+    BoxShadow(
+      color: Color(0x14000000),
+      blurRadius: 24,
+      spreadRadius: 0,
+      offset: Offset(0, 4),
+    ),
+  ];
+  static List<BoxShadow> shadowSoft = [
+    BoxShadow(
+      color: Color(0x0A000000),
+      blurRadius: 12,
+      spreadRadius: 0,
+      offset: Offset(0, 2),
+    ),
+  ];
+  static List<BoxShadow> shadowPrimary = [
+    BoxShadow(
+      color: Color(0x520B63E5),
+      blurRadius: 22,
+      spreadRadius: 0,
+      offset: Offset(0, 10),
+    ),
+  ];
 }
