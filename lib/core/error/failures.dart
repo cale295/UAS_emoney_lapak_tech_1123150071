@@ -15,3 +15,7 @@ class ServerFailure extends Failure {
   @override
   List<Object?> get props => [message, errorCode];
 }
+
+class NetworkFailure extends Failure {
+  const NetworkFailure([super.message = 'Tidak ada koneksi internet.']);
+}
