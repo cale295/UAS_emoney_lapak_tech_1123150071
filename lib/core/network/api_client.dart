@@ -67,4 +67,28 @@ class ApiClient {
             throw _handleDioError(e);
         }
     }
+    Map<String, dynamic> _handleResponse(Response response) {
+        final data = response.data as Map<String, dynamic>;
+        if (data['success'] == false) {
+            final errorCode = data['error_code'] as String?;
+            final message = data['message'] as String? ?? 'Terjadi kesalahan.';
+
+            if (response.statusCode == 401) {
+                if (errorCode == 'INVALID_OTP' || errorCode == 'INVALID_TOTP') {
+                    throw InvalidOtpException(message);
+                }
+                throw UnauthorizedException(message, errorCode: errorCode);
+            }
+            if (errorCode == 'INSUFFICIENT_BALANCE') {
+                final d = data['data'] as Map<String, dynamic>?;
+                throw InsufficientBalanceException(
+                    message,
+                    balance: (d?['balance'] as num?)?.toDouble(),
+                    amount: (d?['amount'] as num?)?.toDouble(),
+                );
+            }
+            throw ServerException(message, errorCode: errorCode, statusCode: response.statusCode);
+        }
+        return data;
+    }
 }
