@@ -91,4 +91,38 @@ class ApiClient {
         }
         return data;
     }
+    
+    Exception _handleDioError(DioException e) {
+    if (e.type == DioExceptionType.connectionError ||
+        e.type == DioExceptionType.connectionTimeout) {
+      return const NetworkException();
+    }
+    if (e.response != null) {
+      try {
+        final data = e.response!.data as Map<String, dynamic>;
+        final message = data['message'] as String? ?? 'Terjadi kesalahan.';
+        final errorCode = data['error_code'] as String?;
+        final status = e.response!.statusCode;
+
+        if (status == 401) {
+          if (errorCode == 'INVALID_OTP' || errorCode == 'INVALID_TOTP') {
+            return InvalidOtpException(message);
+          }
+          if (errorCode == 'INSUFFICIENT_BALANCE') {
+            final d = data['data'] as Map<String, dynamic>?;
+            return InsufficientBalanceException(
+              message,
+              balance: (d?['balance'] as num?)?.toDouble(),
+              amount: (d?['amount'] as num?)?.toDouble(),
+            );
+          }
+          return UnauthorizedException(message, errorCode: errorCode);
+        }
+        return ServerException(message, errorCode: errorCode, statusCode: status);
+      } catch (_) {
+        return ServerException('Terjadi kesalahan server.', statusCode: e.response?.statusCode);
+      }
+    }
+    return ServerException('Terjadi kesalahan jaringan.');
+  }  
 }
