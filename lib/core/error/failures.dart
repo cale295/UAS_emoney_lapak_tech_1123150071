@@ -27,3 +27,7 @@ class AuthFailure extends Failure {
   @override
   List<Object?> get props => [message, errorCode];
 }
+
+class InvalidOtpFailure extends Failure {
+  const InvalidOtpFailure([super.message = 'Kode OTP tidak valid atau sudah kadaluarsa.']);
+}
