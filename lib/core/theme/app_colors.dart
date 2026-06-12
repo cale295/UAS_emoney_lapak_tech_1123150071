@@ -62,4 +62,16 @@ class AppColors {
       offset: Offset(0, 10),
     ),
   ];
+
+  // Tone map for FeatureIcon
+  static Map<String, List<Color>> tones = {
+    'blue': [primarySurface, primary],
+    'green': [greenSurface, green],
+    'amber': [amberSurface, amber],
+    'red': [redSurface, red],
+    'violet': [violetSurface, violet],
+    'slate': [bg, slate600],
+  };
+
+  static List<Color> tone(String name) => tones[name] ?? tones['blue']!;
 }
