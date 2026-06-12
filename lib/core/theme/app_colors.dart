@@ -28,4 +28,12 @@ class AppColors {
   static const Color line2 = Color(0xFFF3F5F8);
   static const Color bg = Color(0xFFF6F7F9);
   static const Color white = Color(0xFFFFFFFF);
+
+  // Gradient
+  static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0.0, 0.55, 1.0],
+    colors: [primaryLight, primary, primaryDark],
+  );
 }
