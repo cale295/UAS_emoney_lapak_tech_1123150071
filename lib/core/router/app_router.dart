@@ -1,3 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../../injection/injection_container.dart';
+import '../../presentation/blocs/account/account_bloc.dart';
+import '../../presentation/blocs/auth/auth_bloc.dart';
+import '../../presentation/blocs/auth/otp_bloc.dart';
+import '../../presentation/blocs/payment/payment_bloc.dart';
+import '../../presentation/pages/account/account_page.dart';
+import '../../presentation/pages/auth/login_page.dart';
+import '../../presentation/pages/auth/register_page.dart';
+import '../../presentation/pages/auth/setup_2fa_page.dart';
+import '../../presentation/pages/auth/twofa_notif_page.dart';
+import '../../presentation/pages/auth/twofa_smtp_page.dart';
+import '../../presentation/pages/auth/twofa_totp_page.dart';
+import '../../presentation/pages/auth/verify_email_page.dart';
+import '../../presentation/pages/history/history_page.dart';
+import '../../presentation/pages/home/home_page.dart';
+import '../../presentation/pages/merchant/merchant_checkout_page.dart';
+import '../../presentation/pages/payment/payment_qr_page.dart';
+import '../../presentation/pages/payment/pin_page.dart';
+import '../../presentation/pages/promo/promo_page.dart';
+import '../../presentation/pages/splash/splash_page.dart';
+import '../../presentation/pages/success/success_page.dart';
+import '../../presentation/pages/topup/topup_page.dart';
+import '../../presentation/pages/transfer/transfer_amount_page.dart';
+import '../../presentation/pages/transfer/transfer_confirm_page.dart';
+import '../../presentation/pages/transfer/transfer_page.dart';
+import '../../presentation/widgets/app_tab_bar.dart';
+
 class AppRouter {
     static final _rootNavigatirKey = GlobalKey<NavigatorState>();
 
