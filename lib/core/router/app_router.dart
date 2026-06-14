@@ -29,10 +29,10 @@ import '../../presentation/pages/transfer/transfer_page.dart';
 import '../../presentation/widgets/app_tab_bar.dart';
 
 class AppRouter {
-    static final _rootNavigatirKey = GlobalKey<NavigatorState>();
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-    static GoRouter get router = > GoRouter(
-        navigatorKey: _rootNavigatirKey,
+  static GoRouter get router => GoRouter(
+        navigatorKey: _rootNavigatorKey,
         initialLocation: '/',
         routes: [
           GoRoute(
@@ -76,6 +76,7 @@ class AppRouter {
               return _withOtp(TwoFANotifPage(mode: extra?['mode'] as String? ?? 'login'));
             },
           ),
+          // Main app with tabs
           ShellRoute(
             builder: (context, state, child) {
               final location = state.matchedLocation;
@@ -110,6 +111,7 @@ class AppRouter {
               GoRoute(path: '/akun', builder: (_, __) => const AccountPage()),
             ],
           ),
+          // Payment flows (no tab bar)
           GoRoute(path: '/topup', builder: (_, __) => _withPayment(const TopUpPage())),
           GoRoute(path: '/transfer', builder: (_, __) => const TransferPage()),
           GoRoute(
@@ -159,30 +161,31 @@ class AppRouter {
           ),
           GoRoute(path: '/merchant', builder: (_, __) => _withPayment(const MerchantCheckoutPage())),
         ],
-    );
-    static Widget _withAuth(Widget child) {
-        return BlocProvider(create: (_) => sl<AuthBloc>(), child: child);
-    }
+      );
 
-    static Widget _withOtp(Widget child) {
-        return MultiBlocProvider(providers: [
-        BlocProvider(create: (_) => sl<AuthBloc>()),
-        BlocProvider(create: (_) => sl<OtpBloc>()),
-        ], child: child);
-    }
+  static Widget _withAuth(Widget child) {
+    return BlocProvider(create: (_) => sl<AuthBloc>(), child: child);
+  }
 
-    static Widget _withAccount(Widget child) {
-        return MultiBlocProvider(providers: [
-        BlocProvider(create: (_) => sl<AuthBloc>()),
-        BlocProvider(create: (_) => sl<AccountBloc>()),
-        ], child: child);
-    }
+  static Widget _withOtp(Widget child) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(create: (_) => sl<AuthBloc>()),
+      BlocProvider(create: (_) => sl<OtpBloc>()),
+    ], child: child);
+  }
 
-    static Widget _withPayment(Widget child) {
-        return MultiBlocProvider(providers: [
-        BlocProvider(create: (_) => sl<AuthBloc>()),
-        BlocProvider(create: (_) => sl<AccountBloc>()),
-        BlocProvider(create: (_) => sl<PaymentBloc>()),
-        ], child: child);
-    }
+  static Widget _withAccount(Widget child) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(create: (_) => sl<AuthBloc>()),
+      BlocProvider(create: (_) => sl<AccountBloc>()),
+    ], child: child);
+  }
+
+  static Widget _withPayment(Widget child) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(create: (_) => sl<AuthBloc>()),
+      BlocProvider(create: (_) => sl<AccountBloc>()),
+      BlocProvider(create: (_) => sl<PaymentBloc>()),
+    ], child: child);
+  }
 }
