@@ -12,7 +12,12 @@
           "package_name": "com.emoney"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "69413909339-ks8qsaumie3sm8ls7q2685g6ctkbaaqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAsLjUyvO4Huu4t86YKVbEjKulJPsiy9lQ"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69413909339-ks8qsaumie3sm8ls7q2685g6ctkbaaqv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69413909339-7bf57kipf98ikj2ib7ic1vns72lj6okp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.emoney"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +48,28 @@
           "package_name": "com.example.emoney"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "69413909339-dnmea2vtvle76nmi5v7emqe5hi5gn9is.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.emoney",
+            "certificate_hash": "9bf5d937cbe16bbfc9ab076e926d8d6b6b74dba5"
+          }
+        },
+        {
+          "client_id": "69413909339-phb72ohe4v53nr85vh3kb0lro6rgsldv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.emoney",
+            "certificate_hash": "80b804f108d2cf4cd166b8957e4627078338e64f"
+          }
+        },
+        {
+          "client_id": "69413909339-ks8qsaumie3sm8ls7q2685g6ctkbaaqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAsLjUyvO4Huu4t86YKVbEjKulJPsiy9lQ"
@@ -39,7 +77,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69413909339-ks8qsaumie3sm8ls7q2685g6ctkbaaqv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69413909339-7bf57kipf98ikj2ib7ic1vns72lj6okp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.emoney"
+              }
+            }
+          ]
         }
       }
     }
