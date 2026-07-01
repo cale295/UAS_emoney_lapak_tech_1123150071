@@ -31,14 +31,14 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
   ));
 
-  _deeplinkService = DeeplinkService(AppRouter.router);
-  await _deeplinkService.init();
+  final deeplinkService = DeeplinkService(AppRouter.router);
+  await deeplinkService.init();
 
-  runApp(const DompetKampusApp());
+  runApp(const techpayApp());
 }
 
-class DompetKampusApp extends StatelessWidget {
-  const DompetKampusApp({super.key});
+class techpayApp extends StatelessWidget {
+  const techpayApp({super.key});
 
   @override
   Widget build(BuildContext context) {

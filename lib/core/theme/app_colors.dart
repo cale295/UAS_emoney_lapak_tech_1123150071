@@ -74,4 +74,12 @@ class AppColors {
   };
 
   static List<Color> tone(String name) => tones[name] ?? tones['blue']!;
+}   'purple': [violetSurface, accent],
+    'green': [successSurface, success],
+    'amber': [warningSurface, warning],
+    'red': [errorSurface, error],
+    'slate': [bg, slate600],
+  };
+
+  static List<Color> tone(String name) => tones[name] ?? tones['blue']!;
 }

@@ -9,7 +9,7 @@ import '../../widgets/app_logo.dart';
 import '../../widgets/feature_icon.dart';
 
 /// Halaman konfirmasi pembayaran yang dibuka dari deeplink merchant
-/// (`dompetkampus://pay?...` atau `https://dompetkampus.app/pay?...`).
+/// (`techpay://pay?...` atau `https://techpay.app/pay?...`).
 ///
 /// `data` bisa berupa:
 ///  - [DeeplinkPaymentData] → tampilkan ringkasan & tombol bayar
