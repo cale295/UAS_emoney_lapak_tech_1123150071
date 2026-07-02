@@ -148,25 +148,6 @@ Ikuti langkah-langkah berikut untuk menjalankan project di perangkat lokal:
 
 ---
 
-## ⚙️ Environment (.env)
-
-Buat file `.env` berdasarkan konfigurasi berikut:
-
-```env
-# Supabase Configuration
-SUPABASE_URL=https://[YOUR_PROJECT_REF].supabase.co
-SUPABASE_ANON_KEY=[YOUR_SUPABASE_ANON_KEY]
-
-# API Configuration
-API_BASE_URL=https://api.example.com
-
-# Deep Link Scheme
-DEEP_LINK_SCHEME=techpay
-CALLBACK_SCHEME_LAPAK_TECH=lapaktech
-```
-
----
-
 ## 🔗 Deep Link Integration
 
 TechPay dirancang untuk menerima request dari luar (Lapak_Tech) menggunakan sistem Deep Link / App Links.
@@ -218,11 +199,17 @@ graph TD
 
 | Login | Dashboard | Payment Confirmation |
 | :---: | :---: | :---: |
-| *<img src="https://via.placeholder.com/200x400.png?text=Login" width="200" alt="Login">* | *<img src="https://via.placeholder.com/200x400.png?text=Dashboard" width="200" alt="Dashboard">* | *<img src="https://via.placeholder.com/200x400.png?text=Payment+Confirm" width="200" alt="Payment Confirmation">* |
+| ![Login](<img width="390" height="874" alt="Screenshot 2026-07-02 213902" src="https://github.com/user-attachments/assets/e8d1c03a-1749-473c-a5fe-ae218cca161c" />
+) | ![Dashboard]() | ![Payment Confirmation]() |
 
-| PIN Input | 2FA / OTP | Transaction Success |
+| PIN Input | 2FA Verification | Transaction Success |
 | :---: | :---: | :---: |
-| *<img src="https://via.placeholder.com/200x400.png?text=PIN" width="200" alt="PIN">* | *<img src="https://via.placeholder.com/200x400.png?text=2FA" width="200" alt="2FA">* | *<img src="https://via.placeholder.com/200x400.png?text=Success" width="200" alt="Success">* |
+| ![PIN Input]() | ![2FA Verification]() | ![Transaction Success]() |
+
+| Transaction History | Profile | Settings |
+| :---: | :---: | :---: |
+| ![Transaction History]() | ![Profile]() | ![Settings]() |
+
 
 ---
 
