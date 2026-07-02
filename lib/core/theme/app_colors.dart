@@ -1,84 +1,158 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Blue
-  static const Color primary = Color(0xFF0B63E5);
-  static const Color primaryLight = Color(0xFF2C8BFF);
-  static const Color primaryDark = Color(0xFF0A4FBF);
-  static const Color primarySurface = Color(0xFFE8F1FD);
-  static const Color primaryBorder = Color(0xFFB8D0F7);
+  // ─── Primary Blue ──────────────────────────────────────────────
+  static const Color primary = Color(0xFF2563EB);
+  static const Color primaryLight = Color(0xFF3B82F6);
+  static const Color primaryDark = Color(0xFF1D4ED8);
+  static const Color primarySurface = Color(0xFFEFF6FF);
+  static const Color primaryBorder = Color(0xFFBFDBFE);
 
-  // Semantic
-  static const Color green = Color(0xFF16A571);
-  static const Color greenSurface = Color(0xFFE8F8F2);
-  static const Color amber = Color(0xFFD98512);
-  static const Color amberSurface = Color(0xFFFDF3E3);
-  static const Color red = Color(0xFFE5484D);
-  static const Color redSurface = Color(0xFFFDECED);
-  static const Color violet = Color(0xFF7A5AF8);
-  static const Color violetSurface = Color(0xFFF0EEFF);
+  // ─── Secondary Cyan ───────────────────────────────────────────
+  static const Color secondary = Color(0xFF06B6D4);
+  static const Color secondaryLight = Color(0xFF22D3EE);
+  static const Color secondaryDark = Color(0xFF0891B2);
+  static const Color secondarySurface = Color(0xFFECFEFF);
 
-  // Neutral
-  static const Color ink = Color(0xFF0E1726);
-  static const Color slate600 = Color(0xFF4B5E78);
-  static const Color slate500 = Color(0xFF6B7A90);
-  static const Color slate400 = Color(0xFF9DABBE);
-  static const Color slate300 = Color(0xFFCBD2DD);
-  static const Color line = Color(0xFFE8ECF2);
-  static const Color line2 = Color(0xFFF3F5F8);
-  static const Color bg = Color(0xFFF6F7F9);
+  // ─── Accent Purple ────────────────────────────────────────────
+  static const Color accent = Color(0xFF7C3AED);
+  static const Color accentLight = Color(0xFF8B5CF6);
+  static const Color accentSurface = Color(0xFFF5F3FF);
+
+  // ─── Semantic ─────────────────────────────────────────────────
+  static const Color success = Color(0xFF10B981);
+  static const Color successLight = Color(0xFF34D399);
+  static const Color successSurface = Color(0xFFECFDF5);
+
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color warningSurface = Color(0xFFFFFBEB);
+
+  static const Color error = Color(0xFFEF4444);
+  static const Color errorSurface = Color(0xFFFEF2F2);
+
+  // Keep backward compat aliases
+  static const Color green = success;
+  static const Color greenSurface = successSurface;
+  static const Color amber = warning;
+  static const Color amberSurface = warningSurface;
+  static const Color red = error;
+  static const Color redSurface = errorSurface;
+  static const Color violet = accent;
+  static const Color violetSurface = accentSurface;
+
+  // ─── Neutral Slate ────────────────────────────────────────────
+  static const Color ink = Color(0xFF0F172A);
+  static const Color slate700 = Color(0xFF334155);
+  static const Color slate600 = Color(0xFF475569);
+  static const Color slate500 = Color(0xFF64748B);
+  static const Color slate400 = Color(0xFF94A3B8);
+  static const Color slate300 = Color(0xFFCBD5E1);
+  static const Color line = Color(0xFFE2E8F0);
+  static const Color line2 = Color(0xFFF1F5F9);
+  static const Color bg = Color(0xFFF8FAFC);
+  static const Color surface = Color(0xFFFFFFFF);
   static const Color white = Color(0xFFFFFFFF);
 
-  // Gradient
+  // ─── Gradients ────────────────────────────────────────────────
+
+  /// Blue → Cyan (primary action gradient)
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    stops: [0.0, 0.55, 1.0],
-    colors: [primaryLight, primary, primaryDark],
+    colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
   );
 
-  // Shadows
+  /// Blue → Purple (accent gradient)
+  static const LinearGradient accentGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF2563EB), Color(0xFF7C3AED)],
+  );
+
+  /// Cyan → Indigo (secondary gradient)
+  static const LinearGradient cyanIndigoGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF06B6D4), Color(0xFF4F46E5)],
+  );
+
+  /// Dark wallet card gradient
+  static const LinearGradient walletGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0.0, 0.5, 1.0],
+    colors: [Color(0xFF1E3A8A), Color(0xFF2563EB), Color(0xFF0891B2)],
+  );
+
+  /// Splash background gradient (dark futuristic)
+  static const LinearGradient splashGradient = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [Color(0xFF0F172A), Color(0xFF1E3A8A), Color(0xFF0F172A)],
+  );
+
+  // ─── Shadows ──────────────────────────────────────────────────
   static List<BoxShadow> shadowCard = [
     BoxShadow(
-      color: Color(0x14000000),
-      blurRadius: 24,
+      color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+      blurRadius: 32,
       spreadRadius: 0,
-      offset: Offset(0, 4),
+      offset: const Offset(0, 8),
+    ),
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+      blurRadius: 8,
+      spreadRadius: 0,
+      offset: const Offset(0, 2),
     ),
   ];
+
   static List<BoxShadow> shadowSoft = [
     BoxShadow(
-      color: Color(0x0A000000),
-      blurRadius: 12,
+      color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+      blurRadius: 16,
       spreadRadius: 0,
-      offset: Offset(0, 2),
+      offset: const Offset(0, 4),
     ),
   ];
+
   static List<BoxShadow> shadowPrimary = [
     BoxShadow(
-      color: Color(0x520B63E5),
-      blurRadius: 22,
+      color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+      blurRadius: 24,
       spreadRadius: 0,
-      offset: Offset(0, 10),
+      offset: const Offset(0, 8),
     ),
   ];
 
-  // Tone map for FeatureIcon
-  static Map<String, List<Color>> tones = {
-    'blue': [primarySurface, primary],
-    'green': [greenSurface, green],
-    'amber': [amberSurface, amber],
-    'red': [redSurface, red],
-    'violet': [violetSurface, violet],
-    'slate': [bg, slate600],
-  };
+  static List<BoxShadow> shadowGlow = [
+    BoxShadow(
+      color: const Color(0xFF2563EB).withValues(alpha: 0.2),
+      blurRadius: 40,
+      spreadRadius: -4,
+      offset: const Offset(0, 12),
+    ),
+  ];
 
-  static List<Color> tone(String name) => tones[name] ?? tones['blue']!;
-}   'purple': [violetSurface, accent],
+  static List<BoxShadow> shadowWallet = [
+    BoxShadow(
+      color: const Color(0xFF1E3A8A).withValues(alpha: 0.45),
+      blurRadius: 40,
+      spreadRadius: 0,
+      offset: const Offset(0, 16),
+    ),
+  ];
+
+  // ─── Tone map ─────────────────────────────────────────────────
+  static const Map<String, List<Color>> tones = {
+    'blue': [primarySurface, primary],
+    'cyan': [secondarySurface, secondary],
+    'purple': [accentSurface, accent],
     'green': [successSurface, success],
     'amber': [warningSurface, warning],
     'red': [errorSurface, error],
-    'slate': [bg, slate600],
+    'violet': [accentSurface, accent],
+    'slate': [line2, slate600],
   };
 
   static List<Color> tone(String name) => tones[name] ?? tones['blue']!;

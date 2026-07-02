@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/deeplink_callback_service.dart';
 import '../../../core/theme/app_colors.dart';
@@ -31,7 +32,6 @@ class _PinPageState extends State<PinPage> {
   bool _busy = false;
   bool _otpError = false;
 
-  // 2FA method aktif ('smtp' | 'totp' | 'notif'), default ke TOTP.
   String _twoFaMethod = AppConstants.twoFaTotp;
 
   int _resendTimer = AppConstants.otpResendSeconds;
@@ -43,7 +43,6 @@ class _PinPageState extends State<PinPage> {
     super.dispose();
   }
 
-  // Step 1: PIN selesai diketik → tentukan apakah perlu OTP/2FA atau langsung diproses.
   void _onPinComplete(String pin) {
     setState(() {
       _pin = pin;
@@ -60,8 +59,6 @@ class _PinPageState extends State<PinPage> {
     }
   }
 
-  // Baca metode 2FA yang dikonfigurasi user, lalu kirim OTP (smtp/notif) atau
-  // langsung tampilkan input kode (totp).
   Future<void> _prepareOtpStep() async {
     final method = await sl<SecureStorageDatasource>().get2faMethod();
     if (!mounted) return;
@@ -102,7 +99,6 @@ class _PinPageState extends State<PinPage> {
     _startResendTimer();
   }
 
-  // Mapping metode 2FA → otp_type yang dipahami backend.
   String get _otpType {
     switch (_twoFaMethod) {
       case AppConstants.twoFaSmtp:
@@ -122,7 +118,6 @@ class _PinPageState extends State<PinPage> {
     return flow['description'] as String? ?? 'Pembayaran';
   }
 
-  // Kembalikan callbackUrl jika ini flow deeplink merchant, null jika bukan.
   String? get _callbackUrl {
     final kind = widget.flowData['kind'] as String? ?? '';
     if (kind != 'deeplink') return null;
@@ -142,7 +137,6 @@ class _PinPageState extends State<PinPage> {
     }
   }
 
-  // Step 2: kode OTP/TOTP lengkap → kirim ke endpoint transfer/pembayaran.
   void _submitPayment(String code) {
     setState(() => _busy = true);
     final flow = widget.flowData;
@@ -162,7 +156,6 @@ class _PinPageState extends State<PinPage> {
           listener: (context, state) {
             if (state is PaymentTransferSuccess) {
               final result = state.result;
-              // Kirim callback sukses ke app merchant (fire-and-forget, best-effort).
               final cb = _callbackUrl;
               if (cb != null) {
                 DeeplinkCallbackService.notifySuccess(
@@ -178,7 +171,7 @@ class _PinPageState extends State<PinPage> {
                 'lines': [
                   ['Jumlah', CurrencyFormatter.format(result.amount)],
                   ['Saldo setelah', CurrencyFormatter.format(result.balanceAfter)],
-                  ['Ref', 'DKG${result.transactionId}'],
+                  ['Ref', 'TKP${result.transactionId}'],
                 ],
               });
             } else if (state is PaymentTopupSuccess) {
@@ -202,7 +195,6 @@ class _PinPageState extends State<PinPage> {
               });
             } else if (state is PaymentInsufficientBalance) {
               setState(() => _busy = false);
-              // Callback gagal — saldo tidak cukup.
               final cb = _callbackUrl;
               if (cb != null) {
                 DeeplinkCallbackService.notifyFailed(
@@ -214,12 +206,11 @@ class _PinPageState extends State<PinPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Saldo tidak cukup. Saldo kamu saat ini ${CurrencyFormatter.format(state.balance)}.'),
-                  backgroundColor: AppColors.red,
+                  backgroundColor: AppColors.error,
                 ),
               );
             } else if (state is PaymentError) {
               setState(() => _busy = false);
-              // Callback gagal — error server/jaringan.
               final cb = _callbackUrl;
               if (cb != null) {
                 DeeplinkCallbackService.notifyFailed(
@@ -229,7 +220,9 @@ class _PinPageState extends State<PinPage> {
                 );
               }
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
+                SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error),
               );
             }
           },
@@ -238,7 +231,9 @@ class _PinPageState extends State<PinPage> {
           listener: (context, state) {
             if (state is OtpError) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
+                SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error),
               );
             }
           },
@@ -249,46 +244,92 @@ class _PinPageState extends State<PinPage> {
         body: SafeArea(
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.close_rounded, color: AppColors.ink),
-                  onPressed: () {
-                    if (_step == _Step.otp && !_busy) {
-                      _countdown?.cancel();
-                      setState(() {
-                        _step = _Step.pin;
-                        _pin = '';
-                        _otpCode = '';
-                      });
-                    } else {
-                      // Kirim callback cancelled jika user membatalkan dari flow deeplink.
-                      final cb = _callbackUrl;
-                      if (cb != null) {
-                        DeeplinkCallbackService.notifyCancelled(
-                          callbackUrl: cb,
-                          reference: _callbackReference,
-                        );
+              // Close / back row
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_step == _Step.otp && !_busy) {
+                        _countdown?.cancel();
+                        setState(() {
+                          _step = _Step.pin;
+                          _pin = '';
+                          _otpCode = '';
+                        });
+                      } else {
+                        final cb = _callbackUrl;
+                        if (cb != null) {
+                          DeeplinkCallbackService.notifyCancelled(
+                            callbackUrl: cb,
+                            reference: _callbackReference,
+                          );
+                        }
+                        context.go('/home');
                       }
-                      context.go('/home');
-                    }
-                  },
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.bg,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.close_rounded,
+                          color: AppColors.slate600, size: 20),
+                    ),
+                  ),
                 ),
               ),
+
+              // Step indicator
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                child: Row(
+                  children: [
+                    _StepDot(active: true, done: _step == _Step.otp),
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          gradient: _step == _Step.otp
+                              ? AppColors.primaryGradient
+                              : null,
+                          color: _step == _Step.otp ? null : AppColors.line2,
+                          borderRadius: BorderRadius.circular(1),
+                        ),
+                      ),
+                    ),
+                    _StepDot(active: _step == _Step.otp),
+                  ],
+                ),
+              ),
+
               if (_busy) ...[
-                const Expanded(
+                Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(color: AppColors.primary),
-                      SizedBox(height: 18),
-                      Text('Memproses transaksi…',
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.slate600,
-                          )),
+                      const SizedBox(
+                        width: 42,
+                        height: 42,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3.0,
+                          valueColor:
+                              AlwaysStoppedAnimation(AppColors.primary),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        'Memproses transaksi…',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.slate600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -306,44 +347,56 @@ class _PinPageState extends State<PinPage> {
 
   Widget _buildPinStep() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 10, 24, 24),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
       child: Column(
         children: [
           Container(
-            width: 54,
-            height: 54,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              color: AppColors.primarySurface,
-              borderRadius: BorderRadius.circular(16),
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: AppColors.shadowPrimary,
             ),
-            child: const Center(child: Icon(Icons.lock_outline_rounded, size: 26, color: AppColors.primary)),
+            child: const Center(
+                child: Icon(Icons.lock_rounded, size: 26, color: Colors.white)),
           ),
           const SizedBox(height: 16),
-          const Text('Masukkan PIN',
-              style: TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 21,
-                fontWeight: FontWeight.w800,
-                color: AppColors.ink,
-              )),
+          Text(
+            'Masukkan PIN',
+            style: GoogleFonts.inter(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: AppColors.ink,
+              letterSpacing: -0.4,
+            ),
+          ),
           const SizedBox(height: 6),
-          const Text('Masukkan 6 digit PIN keamanan kamu',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13.5, color: AppColors.slate500)),
+          Text(
+            'Masukkan 6 digit PIN keamanan kamu',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 13.5,
+              color: AppColors.slate500,
+            ),
+          ),
           const Spacer(),
           PinPad(
             value: _pin,
             onChanged: (v) => setState(() => _pin = v),
             onComplete: _onPinComplete,
           ),
-          const SizedBox(height: 18),
-          const Text.rich(TextSpan(
+          const SizedBox(height: 16),
+          Text.rich(TextSpan(
             text: 'Lupa PIN? ',
-            style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12.5, color: AppColors.slate400),
+            style: GoogleFonts.inter(
+                fontSize: 12.5, color: AppColors.slate400),
             children: [
               TextSpan(
                 text: 'Reset',
-                style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700),
               ),
             ],
           )),
@@ -356,55 +409,74 @@ class _PinPageState extends State<PinPage> {
     final header = _otpHeader;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(28, 8, 28, 24),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
       child: Column(
         children: [
-          FeatureIcon(icon: header.icon, tone: header.tone, size: 74, iconSize: 36),
+          FeatureIcon(
+              icon: header.icon, tone: header.tone, size: 72, iconSize: 36),
           const SizedBox(height: 18),
-          Text(header.title,
-              style: const TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 23,
-                fontWeight: FontWeight.w800,
-                color: AppColors.ink,
-                letterSpacing: -0.3,
-              )),
+          Text(
+            header.title,
+            style: GoogleFonts.inter(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: AppColors.ink,
+              letterSpacing: -0.4,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(header.subtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14.5, color: AppColors.slate500, height: 1.55)),
+          Text(
+            header.subtitle,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 14.5,
+              color: AppColors.slate500,
+              height: 1.55,
+            ),
+          ),
           const SizedBox(height: 28),
           AnimatedContainer(
             duration: const Duration(milliseconds: 80),
-            transform: _otpError ? (Matrix4.identity()..translateByDouble(8.0, 0, 0, 1)) : Matrix4.identity(),
-            child: CodeInput(value: _otpCode, onChanged: _onOtpChanged, hasError: _otpError),
+            transform: _otpError
+                ? (Matrix4.identity()..translateByDouble(8.0, 0, 0, 1))
+                : Matrix4.identity(),
+            child: CodeInput(
+                value: _otpCode,
+                onChanged: _onOtpChanged,
+                hasError: _otpError),
           ),
           if (_otpError) ...[
             const SizedBox(height: 12),
-            const Text('Kode OTP salah, silakan coba lagi',
-                style: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
-                  color: AppColors.red,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                )),
+            Text(
+              'Kode OTP salah, silakan coba lagi',
+              style: GoogleFonts.inter(
+                color: AppColors.error,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
           const SizedBox(height: 18),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.primarySurface,
+              gradient: const LinearGradient(
+                colors: [AppColors.primarySurface, AppColors.secondarySurface],
+              ),
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                  color: AppColors.primaryBorder.withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
-                const Icon(DkgIcons.shieldCheck, size: 18, color: AppColors.primary),
+                const Icon(DkgIcons.shieldCheck,
+                    size: 18, color: AppColors.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Total pembayaran ${CurrencyFormatter.format((widget.flowData['amount'] as num).toDouble())}',
-                    style: const TextStyle(
-                      fontFamily: 'PlusJakartaSans',
+                    style: GoogleFonts.inter(
                       fontSize: 12.5,
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
@@ -420,18 +492,21 @@ class _PinPageState extends State<PinPage> {
             _resendTimer > 0
                 ? Text(
                     'Kirim ulang dalam 00:${_resendTimer.toString().padLeft(2, '0')}',
-                    style: const TextStyle(fontSize: 13.5, color: AppColors.slate400),
+                    style: GoogleFonts.inter(
+                        fontSize: 13.5, color: AppColors.slate400),
                   )
                 : TextButton.icon(
                     onPressed: _resendOtp,
-                    icon: const Icon(DkgIcons.refresh, size: 16, color: AppColors.primary),
-                    label: const Text('Kirim ulang kode',
-                        style: TextStyle(
-                          fontFamily: 'PlusJakartaSans',
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        )),
+                    icon: const Icon(DkgIcons.refresh,
+                        size: 16, color: AppColors.primary),
+                    label: Text(
+                      'Kirim ulang kode',
+                      style: GoogleFonts.inter(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
           ],
         ],
@@ -439,29 +514,66 @@ class _PinPageState extends State<PinPage> {
     );
   }
 
-  ({IconData icon, String tone, String title, String subtitle}) get _otpHeader {
+  ({IconData icon, String tone, String title, String subtitle})
+      get _otpHeader {
     switch (_twoFaMethod) {
       case AppConstants.twoFaSmtp:
         return (
           icon: DkgIcons.mail,
           tone: 'blue',
           title: 'Masukkan Kode OTP Email',
-          subtitle: 'Kode 6 digit dikirim ke email kamu via SMTP untuk konfirmasi pembayaran.',
+          subtitle:
+              'Kode 6 digit dikirim ke email kamu via SMTP untuk konfirmasi pembayaran.',
         );
       case AppConstants.twoFaNotif:
         return (
-          icon: Icons.notifications_outlined,
+          icon: Icons.notifications_rounded,
           tone: 'green',
           title: 'Masukkan Kode OTP',
-          subtitle: 'Kami mengirim kode verifikasi ke notifikasi perangkat kamu.',
+          subtitle:
+              'Kami mengirim kode verifikasi ke notifikasi perangkat kamu.',
         );
       default:
         return (
           icon: DkgIcons.smartphone,
-          tone: 'violet',
+          tone: 'purple',
           title: 'Masukkan Kode Authenticator',
-          subtitle: 'Buka aplikasi authenticator kamu dan masukkan kode yang sedang aktif.',
+          subtitle:
+              'Buka aplikasi authenticator kamu dan masukkan kode yang sedang aktif.',
         );
     }
+  }
+}
+
+class _StepDot extends StatelessWidget {
+  final bool active;
+  final bool done;
+  const _StepDot({required this.active, this.done = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        gradient: active ? AppColors.primaryGradient : null,
+        color: active ? null : AppColors.line2,
+        shape: BoxShape.circle,
+      ),
+      child: done
+          ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+          : Center(
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: active
+                      ? Colors.white
+                      : AppColors.slate300,
+                ),
+              ),
+            ),
+    );
   }
 }

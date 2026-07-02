@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/app_avatar.dart';
 import '../../widgets/app_field.dart';
@@ -18,7 +19,7 @@ const _banks = [
   {'id': 'bca', 'name': 'BCA', 'sub': 'Bank Central Asia', 'tone': 'blue'},
   {'id': 'bni', 'name': 'BNI', 'sub': 'Bank Negara Indonesia', 'tone': 'amber'},
   {'id': 'mandiri', 'name': 'Mandiri', 'sub': 'Bank Mandiri', 'tone': 'blue'},
-  {'id': 'bri', 'name': 'BRI', 'sub': 'Bank Rakyat Indonesia', 'tone': 'blue'},
+  {'id': 'bri', 'name': 'BRI', 'sub': 'Bank Rakyat Indonesia', 'tone': 'green'},
 ];
 
 class TransferPage extends StatefulWidget {
@@ -35,35 +36,47 @@ class _TransferPageState extends State<TransferPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bg,
-      appBar: AppTopBar(title: 'Transfer', onBack: () => context.go('/home')),
+      appBar:
+          AppTopBar(title: 'Transfer', onBack: () => context.go('/home')),
       body: Column(
         children: [
+          // ─── Tab selector + Search ─────────────────────────────
           Container(
             color: Colors.white,
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
             child: Column(
               children: [
+                // Tab pills
                 Row(
-                  children: [['dkg', 'Sesama DKG'], ['bank', 'Ke Bank']].map((t) {
+                  children: [
+                    ['dkg', 'Sesama TechPay'],
+                    ['bank', 'Ke Bank']
+                  ].map((t) {
                     final active = _tab == t[0];
                     return Expanded(
                       child: GestureDetector(
-                        onTap: () => setState(() { _tab = t[0]; _q = ''; }),
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 4),
+                        onTap: () =>
+                            setState(() { _tab = t[0]; _q = ''; }),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.only(right: 6),
                           padding: const EdgeInsets.symmetric(vertical: 11),
                           decoration: BoxDecoration(
-                            color: active ? AppColors.primary : AppColors.bg,
+                            gradient: active ? AppColors.primaryGradient : null,
+                            color: active ? null : AppColors.bg,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
-                            child: Text(t[1],
-                                style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: active ? Colors.white : AppColors.slate500,
-                                )),
+                            child: Text(
+                              t[1],
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: active
+                                    ? Colors.white
+                                    : AppColors.slate500,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -74,7 +87,9 @@ class _TransferPageState extends State<TransferPage> {
                 AppField(
                   value: _q,
                   onChanged: (v) => setState(() => _q = v),
-                  placeholder: _tab == 'dkg' ? 'Cari nama / nomor HP' : 'Cari bank',
+                  placeholder: _tab == 'dkg'
+                      ? 'Cari nama / nomor HP'
+                      : 'Cari bank',
                   prefixIcon: const Icon(Icons.search_rounded, size: 20),
                 ),
                 const SizedBox(height: 14),
@@ -82,10 +97,14 @@ class _TransferPageState extends State<TransferPage> {
               ],
             ),
           ),
+
+          // ─── List ────────────────────────────────────────────────
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              child: _tab == 'dkg' ? _buildContacts() : _buildBanks(),
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: _tab == 'dkg'
+                  ? _buildContactList()
+                  : _buildBankList(),
             ),
           ),
         ],
@@ -93,144 +112,212 @@ class _TransferPageState extends State<TransferPage> {
     );
   }
 
-  Widget _buildContacts() {
-    final filtered = _contacts.where((c) =>
-        (c['name'] as String).toLowerCase().contains(_q.toLowerCase())).toList();
+  List<Widget> _buildContactList() {
+    final favs = _contacts
+        .where((c) => c['fav'] == true && _matches(c['name'] as String))
+        .toList();
+    final others = _contacts
+        .where((c) => c['fav'] == false && _matches(c['name'] as String))
+        .toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 4, top: 10, bottom: 8),
-          child: Text('Kontak favorit',
-              style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.slate400)),
-        ),
+    return [
+      if (favs.isNotEmpty) ...[
+        _ListLabel('Favorit'),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: AppColors.shadowSoft,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: AppColors.shadowCard,
           ),
           child: Column(
-            children: filtered.asMap().entries.map((e) {
-              final i = e.key;
-              final c = e.value;
-              return Column(
-                children: [
-                  if (i > 0) const Divider(height: 1, indent: 16, color: AppColors.line2),
-                  GestureDetector(
-                    onTap: () => context.go('/transfer/amount', extra: {
-                      'recipient': c,
-                      'channel': 'dkg',
-                    }),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 13, 16, 13),
-                      child: Row(
-                        children: [
-                          AppAvatar(name: c['name'] as String, size: 44),
-                          const SizedBox(width: 13),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(c['name'] as String,
-                                    style: const TextStyle(
-                                      fontFamily: 'PlusJakartaSans',
-                                      fontSize: 14.5,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.ink,
-                                    )),
-                                Text(c['sub'] as String,
-                                    style: const TextStyle(fontSize: 12.5, color: AppColors.slate400)),
-                              ],
-                            ),
-                          ),
-                          if (c['fav'] as bool)
-                            const Icon(Icons.star_rounded, size: 18, color: AppColors.amber),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+            children: favs.asMap().entries.map((e) {
+              return _ContactTile(
+                contact: e.value,
+                divider: e.key > 0,
+                onTap: () => context.go('/transfer/amount', extra: e.value),
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+      if (others.isNotEmpty) ...[
+        _ListLabel('Kontak lain'),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: AppColors.shadowCard,
+          ),
+          child: Column(
+            children: others.asMap().entries.map((e) {
+              return _ContactTile(
+                contact: e.value,
+                divider: e.key > 0,
+                onTap: () => context.go('/transfer/amount', extra: e.value),
               );
             }).toList(),
           ),
         ),
       ],
-    );
+    ];
   }
 
-  Widget _buildBanks() {
-    final filtered = _banks.where((b) =>
-        (b['sub'] as String).toLowerCase().contains(_q.toLowerCase()) ||
-        (b['name'] as String).toLowerCase().contains(_q.toLowerCase())).toList();
-
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: AppColors.shadowSoft,
-      ),
-      child: Column(
-        children: filtered.asMap().entries.map((e) {
-          final i = e.key;
-          final b = e.value;
-          return Column(
-            children: [
-              if (i > 0) const Divider(height: 1, indent: 16, color: AppColors.line2),
-              GestureDetector(
-                onTap: () => context.go('/transfer/amount', extra: {
-                  'recipient': b,
-                  'channel': 'bank',
-                }),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.primarySurface,
-                          borderRadius: BorderRadius.circular(12),
+  List<Widget> _buildBankList() {
+    final filtered =
+        _banks.where((b) => _matches(b['name'] as String)).toList();
+    return [
+      _ListLabel('Pilih bank tujuan'),
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: AppColors.shadowCard,
+        ),
+        child: Column(
+          children: filtered.asMap().entries.map((e) {
+            final b = e.value;
+            return Column(
+              children: [
+                if (e.key > 0)
+                  const Divider(
+                      height: 1, indent: 70, color: AppColors.line2),
+                GestureDetector(
+                  onTap: () =>
+                      context.go('/transfer/amount', extra: e.value),
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        FeatureIcon(
+                          icon: Icons.account_balance_rounded,
+                          tone: b['tone'] as String,
+                          size: 44,
+                          iconSize: 22,
                         ),
-                        child: Center(
-                          child: Text(b['name'] as String,
-                              style: const TextStyle(
-                                fontFamily: 'PlusJakartaSans',
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.primary,
-                                fontSize: 14,
-                              )),
-                        ),
-                      ),
-                      const SizedBox(width: 13),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(b['sub'] as String,
-                                style: const TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                b['name'] as String,
+                                style: GoogleFonts.inter(
                                   fontSize: 14.5,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   color: AppColors.ink,
-                                )),
-                            const Text('Biaya Rp2.500',
-                                style: TextStyle(fontSize: 12.5, color: AppColors.slate400)),
-                          ],
+                                ),
+                              ),
+                              Text(
+                                b['sub'] as String,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.slate400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right_rounded,
+                            size: 18, color: AppColors.slate300),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
+    ];
+  }
+
+  bool _matches(String name) =>
+      _q.isEmpty || name.toLowerCase().contains(_q.toLowerCase());
+}
+
+class _ListLabel extends StatelessWidget {
+  final String text;
+  const _ListLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 2, bottom: 10),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.slate400,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+}
+
+class _ContactTile extends StatelessWidget {
+  final Map<String, Object> contact;
+  final bool divider;
+  final VoidCallback onTap;
+
+  const _ContactTile({
+    required this.contact,
+    required this.divider,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (divider)
+          const Divider(height: 1, indent: 70, color: AppColors.line2),
+        GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+            child: Row(
+              children: [
+                AppAvatar(name: contact['name'] as String, size: 44),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        contact['name'] as String,
+                        style: GoogleFonts.inter(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.ink,
                         ),
                       ),
-                      const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.slate400),
+                      Text(
+                        contact['sub'] as String,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: AppColors.slate400,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          );
-        }).toList(),
-      ),
+                if (contact['fav'] == true)
+                  const Icon(Icons.star_rounded,
+                      size: 16, color: AppColors.warning),
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_right_rounded,
+                    size: 18, color: AppColors.slate300),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_colors.dart'; // needed for shadow colors
 
 class AppAvatar extends StatelessWidget {
   final String name;
@@ -16,15 +18,16 @@ class AppAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = [
-      const Color(0xFF0B63E5),
-      const Color(0xFF16A571),
-      const Color(0xFF7A5AF8),
-      const Color(0xFFF5A623),
-      const Color(0xFFE5484D),
-      const Color(0xFF0EA5E9),
+    const gradients = [
+      [Color(0xFF2563EB), Color(0xFF06B6D4)], // Blue → Cyan
+      [Color(0xFF10B981), Color(0xFF06B6D4)], // Green → Cyan
+      [Color(0xFF7C3AED), Color(0xFF2563EB)], // Purple → Blue
+      [Color(0xFFF59E0B), Color(0xFFEF4444)], // Amber → Red
+      [Color(0xFF06B6D4), Color(0xFF4F46E5)], // Cyan → Indigo
+      [Color(0xFF10B981), Color(0xFF2563EB)], // Green → Blue
     ];
-    final auto = palette[(name.isNotEmpty ? name.codeUnitAt(0) : 0) % palette.length];
+    final idx = (name.isNotEmpty ? name.codeUnitAt(0) : 0) % gradients.length;
+    final gradient = gradients[idx];
     final initials = name
         .split(' ')
         .take(2)
@@ -35,8 +38,22 @@ class AppAvatar extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: bg ?? auto,
+        gradient: bg != null
+            ? null
+            : LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: gradient,
+              ),
+        color: bg,
         shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: (bg ?? gradient.first).withValues(alpha: 0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: imageUrl != null
@@ -44,9 +61,8 @@ class AppAvatar extends StatelessWidget {
           : Center(
               child: Text(
                 initials,
-                style: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
-                  fontSize: size * 0.36,
+                style: GoogleFonts.inter(
+                  fontSize: size * 0.34,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),

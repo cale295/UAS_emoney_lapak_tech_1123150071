@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 
 class AppField extends StatefulWidget {
@@ -69,46 +69,54 @@ class _AppFieldState extends State<AppField> {
         if (widget.label != null) ...[
           Text(
             widget.label!,
-            style: const TextStyle(
-              fontFamily: 'PlusJakartaSans',
-              fontSize: 13.5,
+            style: GoogleFonts.inter(
+              fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.slate600,
+              color: _focused ? AppColors.primary : AppColors.slate600,
             ),
           ),
           const SizedBox(height: 8),
         ],
         AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          height: 54,
+          duration: const Duration(milliseconds: 200),
+          height: 56,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: _focused ? AppColors.primary : AppColors.line,
-              width: 1.0,
+              width: _focused ? 2.0 : 1.5,
             ),
             boxShadow: _focused
                 ? [
                     BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 0, spreadRadius: 4)
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      blurRadius: 0,
+                      spreadRadius: 3,
+                    ),
                   ]
-                : [],
+                : AppColors.shadowSoft,
           ),
           child: Row(
             children: [
               if (widget.prefixIcon != null) ...[
-                const SizedBox(width: 14),
-                ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    _focused ? AppColors.primary : AppColors.slate400,
-                    BlendMode.srcIn,
+                const SizedBox(width: 16),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style: TextStyle(
+                    color: _focused ? AppColors.primary : AppColors.slate400,
                   ),
-                  child: widget.prefixIcon!,
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      _focused ? AppColors.primary : AppColors.slate400,
+                      BlendMode.srcIn,
+                    ),
+                    child: widget.prefixIcon!,
+                  ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
               ] else
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
               Expanded(
                 child: Focus(
                   onFocusChange: (f) => setState(() => _focused = f),
@@ -121,17 +129,15 @@ class _AppFieldState extends State<AppField> {
                     maxLength: widget.maxLength,
                     textInputAction: widget.textInputAction,
                     onEditingComplete: widget.onEditingComplete,
-                    style: const TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 15.5,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppColors.ink,
                     ),
                     decoration: InputDecoration(
                       hintText: widget.placeholder,
-                      hintStyle: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 15.5,
+                      hintStyle: GoogleFonts.inter(
+                        fontSize: 15,
                         fontWeight: FontWeight.w400,
                         color: AppColors.slate300,
                       ),
@@ -145,7 +151,7 @@ class _AppFieldState extends State<AppField> {
               ),
               if (widget.suffixIcon != null) ...[
                 widget.suffixIcon!,
-                const SizedBox(width: 4),
+                const SizedBox(width: 6),
               ],
             ],
           ),

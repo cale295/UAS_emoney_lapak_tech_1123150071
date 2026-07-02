@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../widgets/app_avatar.dart';
@@ -26,180 +27,205 @@ class AccountPage extends StatelessWidget {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                // Header
+                // ─── Profile Header ───────────────────────────────
                 Container(
                   decoration: const BoxDecoration(
-                    gradient: AppColors.primaryGradient,
+                    gradient: AppColors.walletGradient,
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(28),
                       bottomRight: Radius.circular(28),
                     ),
                   ),
                   padding: EdgeInsets.fromLTRB(
-                      20, MediaQuery.of(context).padding.top + 12, 20, 24),
-                  child: Row(
+                      20, MediaQuery.of(context).padding.top + 12, 20, 28),
+                  child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      AppAvatar(name: user?.name ?? 'User', size: 60, bg: Colors.white.withValues(alpha: 0.25)),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(user?.name ?? 'Pengguna',
-                                style: const TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                )),
-                            Text(user?.email ?? '',
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  fontSize: 13,
-                                  color: Colors.white70,
-                                )),
-                          ],
+                      Positioned(
+                        right: -20,
+                        top: -20,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.06),
+                          ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.verified_user_outlined, size: 14, color: Colors.white),
-                            SizedBox(width: 5),
-                            Text('Terverifikasi',
-                                style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                )),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          AppAvatar(
+                              name: user?.name ?? 'User',
+                              size: 62),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user?.name ?? 'Pengguna',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  user?.email ?? '',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13,
+                                    color: Colors.white.withValues(alpha: 0.65),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.success.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: AppColors.success
+                                            .withValues(alpha: 0.4),
+                                        width: 1),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.verified_user_rounded,
+                                          size: 12, color: Colors.white),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        'Terverifikasi',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4, bottom: 8),
-                        child: Text('Keamanan',
-                            style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.slate400,
-                            )),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: AppColors.shadowSoft,
+                      // ─── Security Section ──────────────────────────
+                      _SectionTitle('Keamanan'),
+                      const SizedBox(height: 8),
+                      _MenuCard(children: [
+                        _Row(
+                          icon: Icons.verified_user_rounded,
+                          tone: 'green',
+                          title: 'Verifikasi 2 langkah (2FA)',
+                          subtitle: 'Aktif · Email OTP',
+                          onTap: () => context.go('/setup-2fa'),
+                          right: const AppBadge(label: 'Aktif', tone: 'green'),
                         ),
-                        child: Column(
-                          children: [
-                            _Row(
-                              icon: Icons.verified_user_outlined,
-                              tone: 'green',
-                              title: 'Verifikasi 2 langkah (2FA)',
-                              subtitle: 'Aktif · Email OTP',
-                              onTap: () => context.go('/setup-2fa'),
-                              right: const AppBadge(label: 'Aktif', tone: 'green'),
-                            ),
-                            const Divider(height: 1, indent: 56, color: AppColors.line2),
-                            _Row(
-                              icon: Icons.lock_outline_rounded,
-                              tone: 'blue',
-                              title: 'Ubah PIN keamanan',
-                              subtitle: 'Terakhir diubah 2 bln lalu',
-                              onTap: () {},
-                            ),
-                            const Divider(height: 1, indent: 56, color: AppColors.line2),
-                            _Row(
-                              icon: Icons.fingerprint_rounded,
-                              tone: 'violet',
-                              title: 'Login biometrik',
-                              subtitle: 'Sidik jari',
-                              onTap: () {},
-                              right: _Toggle(),
-                            ),
-                          ],
+                        _Divider(),
+                        _Row(
+                          icon: Icons.lock_rounded,
+                          tone: 'blue',
+                          title: 'Ubah PIN keamanan',
+                          subtitle: 'Terakhir diubah 2 bln lalu',
+                          onTap: () {},
                         ),
-                      ),
-                      const SizedBox(height: 18),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4, bottom: 8),
-                        child: Text('Akun',
-                            style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.slate400,
-                            )),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: AppColors.shadowSoft,
+                        _Divider(),
+                        _Row(
+                          icon: Icons.fingerprint_rounded,
+                          tone: 'purple',
+                          title: 'Login biometrik',
+                          subtitle: 'Sidik jari',
+                          onTap: () {},
+                          right: _Toggle(),
                         ),
-                        child: Column(
-                          children: [
-                            _Row(icon: Icons.person_outline_rounded, tone: 'blue', title: 'Data pribadi', onTap: () {}),
-                            const Divider(height: 1, indent: 56, color: AppColors.line2),
-                            _Row(icon: Icons.account_balance_outlined, tone: 'green', title: 'Rekening & kartu tersimpan', onTap: () {}),
-                            const Divider(height: 1, indent: 56, color: AppColors.line2),
-                            _Row(icon: Icons.settings_outlined, tone: 'slate', title: 'Pengaturan aplikasi', onTap: () {}),
-                          ],
+                      ]),
+
+                      const SizedBox(height: 20),
+
+                      // ─── Account Section ───────────────────────────
+                      _SectionTitle('Akun'),
+                      const SizedBox(height: 8),
+                      _MenuCard(children: [
+                        _Row(
+                          icon: Icons.person_rounded,
+                          tone: 'blue',
+                          title: 'Data pribadi',
+                          onTap: () {},
                         ),
-                      ),
-                      const SizedBox(height: 18),
+                        _Divider(),
+                        _Row(
+                          icon: Icons.account_balance_rounded,
+                          tone: 'green',
+                          title: 'Rekening & kartu tersimpan',
+                          onTap: () {},
+                        ),
+                        _Divider(),
+                        _Row(
+                          icon: Icons.settings_rounded,
+                          tone: 'slate',
+                          title: 'Pengaturan aplikasi',
+                          onTap: () {},
+                        ),
+                      ]),
+
+                      const SizedBox(height: 20),
+
+                      // ─── Logout ────────────────────────────────────
                       GestureDetector(
-                        onTap: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
+                        onTap: () =>
+                            context.read<AuthBloc>().add(AuthLogoutRequested()),
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: AppColors.shadowSoft,
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.logout_rounded, size: 20, color: AppColors.red),
-                              SizedBox(width: 9),
-                              Text('Keluar',
-                                  style: TextStyle(
-                                    fontFamily: 'PlusJakartaSans',
-                                    color: AppColors.red,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
-                                  )),
+                              const Icon(Icons.logout_rounded,
+                                  size: 20, color: AppColors.error),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Keluar',
+                                style: GoogleFonts.inter(
+                                  color: AppColors.error,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Center(
-                        child: Text('Dompet Kampus Global · v1.0.0',
-                            style: TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 12,
-                              color: AppColors.slate400,
-                            )),
+                      Center(
+                        child: Text(
+                          'TechPay · v1.0.0',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: AppColors.slate300,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 24),
                     ],
@@ -211,6 +237,51 @@ class AccountPage extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String text;
+  const _SectionTitle(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.slate400,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+}
+
+class _MenuCard extends StatelessWidget {
+  final List<Widget> children;
+  const _MenuCard({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: AppColors.shadowCard,
+      ),
+      child: Column(children: children),
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(height: 1, indent: 70, color: AppColors.line2);
   }
 }
 
@@ -246,26 +317,30 @@ class _Row extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.ink,
-                      )),
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ink,
+                    ),
+                  ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
-                    Text(subtitle!,
-                        style: const TextStyle(
-                          fontFamily: 'PlusJakartaSans',
-                          fontSize: 12.5,
-                          color: AppColors.slate400,
-                        )),
+                    Text(
+                      subtitle!,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: AppColors.slate400,
+                      ),
+                    ),
                   ],
                 ],
               ),
             ),
-            right ?? const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.slate400),
+            right ??
+                const Icon(Icons.chevron_right_rounded,
+                    size: 18, color: AppColors.slate300),
           ],
         ),
       ),
@@ -280,20 +355,22 @@ class _Toggle extends StatefulWidget {
 
 class _ToggleState extends State<_Toggle> {
   bool _on = true;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => setState(() => _on = !_on),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 44,
+        duration: const Duration(milliseconds: 200),
+        width: 46,
         height: 26,
         decoration: BoxDecoration(
-          color: _on ? AppColors.green : AppColors.line,
+          gradient: _on ? AppColors.primaryGradient : null,
+          color: _on ? null : AppColors.line,
           borderRadius: BorderRadius.circular(20),
         ),
         child: AnimatedAlign(
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 200),
           alignment: _on ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             margin: const EdgeInsets.all(3),
@@ -302,7 +379,10 @@ class _ToggleState extends State<_Toggle> {
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1))],
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12, blurRadius: 4, offset: Offset(0, 1))
+              ],
             ),
           ),
         ),

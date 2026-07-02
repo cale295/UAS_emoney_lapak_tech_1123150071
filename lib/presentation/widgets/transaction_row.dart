@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -19,12 +20,17 @@ class TransactionRow extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (divider)
-          const Divider(height: 1, thickness: 1, color: AppColors.line2, indent: 16),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: AppColors.line2,
+            indent: 72,
+          ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           child: Row(
             children: [
-              FeatureIcon(icon: icon, tone: tone, size: 44, iconSize: 21),
+              FeatureIcon(icon: icon, tone: tone, size: 46, iconSize: 22),
               const SizedBox(width: 13),
               Expanded(
                 child: Column(
@@ -34,19 +40,18 @@ class TransactionRow extends StatelessWidget {
                       txn.description,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.ink,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       _formatDate(txn.createdAt),
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 12.5,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
                         color: AppColors.slate400,
                       ),
                     ),
@@ -54,14 +59,20 @@ class TransactionRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                '${isCredit ? '+' : '-'}${CurrencyFormatter.format(txn.amount)}',
-                style: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w800,
-                  color: isCredit ? AppColors.green : AppColors.ink,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${isCredit ? '+' : '-'}${CurrencyFormatter.format(txn.amount)}',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: isCredit ? AppColors.success : AppColors.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  _StatusChip(isCredit: isCredit),
+                ],
               ),
             ],
           ),
@@ -74,9 +85,10 @@ class TransactionRow extends StatelessWidget {
     final d = desc.toLowerCase();
     if (d.contains('top up') || d.contains('topup')) return (DkgIcons.topup, 'blue');
     if (d.contains('transfer')) return (DkgIcons.send, 'green');
-    if (d.contains('qris') || d.contains('bayar')) return (DkgIcons.qris, 'violet');
-    if (d.contains('pulsa')) return (DkgIcons.pulsa, 'blue');
+    if (d.contains('qris') || d.contains('bayar')) return (DkgIcons.qris, 'purple');
+    if (d.contains('pulsa')) return (DkgIcons.pulsa, 'cyan');
     if (d.contains('tokobel') || d.contains('toko')) return (DkgIcons.store, 'amber');
+    if (d.contains('tarik') || d.contains('withdraw')) return (DkgIcons.withdraw, 'red');
     return (DkgIcons.wallet, 'slate');
   }
 
@@ -92,7 +104,39 @@ class TransactionRow extends StatelessWidget {
   }
 
   String _month(int m) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+      'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'
+    ];
     return months[m - 1];
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final bool isCredit;
+  const _StatusChip({required this.isCredit});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isCredit ? AppColors.success : AppColors.slate500;
+    final bg = isCredit ? AppColors.successSurface : AppColors.line2;
+    final label = isCredit ? 'Masuk' : 'Keluar';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w600,
+          color: color,
+          letterSpacing: 0.2,
+        ),
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import 'feature_icon.dart';
 
@@ -22,8 +23,8 @@ class AppTabBar extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 20,
+            color: AppColors.ink.withValues(alpha: 0.07),
+            blurRadius: 24,
             offset: const Offset(0, -4),
           ),
         ],
@@ -32,28 +33,48 @@ class AppTabBar extends StatelessWidget {
         top: false,
         child: Row(
           children: [
-            _TabItem(icon: DkgIcons.home, label: 'Home', tabKey: 'home', active: active, onTap: onTab),
-            _TabItem(icon: DkgIcons.history, label: 'Riwayat', tabKey: 'history', active: active, onTap: onTab),
-            // Center scan button
+            _TabItem(
+                icon: DkgIcons.home,
+                label: 'Home',
+                tabKey: 'home',
+                active: active,
+                onTap: onTab),
+            _TabItem(
+                icon: DkgIcons.history,
+                label: 'Riwayat',
+                tabKey: 'history',
+                active: active,
+                onTap: onTab),
+            // Center scan FAB
             Expanded(
               child: Center(
                 child: GestureDetector(
                   onTap: onScan,
                   child: Container(
-                    width: 56,
-                    height: 56,
+                    width: 54,
+                    height: 54,
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
                       shape: BoxShape.circle,
                       boxShadow: AppColors.shadowPrimary,
                     ),
-                    child: const Icon(DkgIcons.scan, color: Colors.white, size: 26),
+                    child: const Icon(DkgIcons.scan, color: Colors.white, size: 24),
                   ),
                 ),
               ),
             ),
-            _TabItem(icon: DkgIcons.gift, label: 'Promo', tabKey: 'promo', active: active, onTap: onTab),
-            _TabItem(icon: DkgIcons.user, label: 'Akun', tabKey: 'akun', active: active, onTap: onTab),
+            _TabItem(
+                icon: DkgIcons.gift,
+                label: 'Promo',
+                tabKey: 'promo',
+                active: active,
+                onTap: onTab),
+            _TabItem(
+                icon: DkgIcons.user,
+                label: 'Akun',
+                tabKey: 'akun',
+                active: active,
+                onTap: onTab),
           ],
         ),
       ),
@@ -86,20 +107,30 @@ class _TabItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isActive ? AppColors.primary : AppColors.slate400,
-            ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 11,
-                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? AppColors.primarySurface
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                icon,
+                size: 22,
                 color: isActive ? AppColors.primary : AppColors.slate400,
               ),
+            ),
+            const SizedBox(height: 1),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: GoogleFonts.inter(
+                fontSize: 10.5,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                color: isActive ? AppColors.primary : AppColors.slate400,
+              ),
+              child: Text(label),
             ),
           ],
         ),

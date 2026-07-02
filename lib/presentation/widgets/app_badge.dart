@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 
 class AppBadge extends StatelessWidget {
@@ -11,17 +12,20 @@ class AppBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.tone(tone);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: colors[0],
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colors[1].withValues(alpha: 0.15),
+          width: 1,
+        ),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontFamily: 'PlusJakartaSans',
+        style: GoogleFonts.inter(
           fontSize: 11.5,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           color: colors[1],
           letterSpacing: 0.2,
         ),

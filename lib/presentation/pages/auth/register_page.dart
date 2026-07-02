@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/error/failures.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/usecases/auth/register_with_otp_usecase.dart';
@@ -23,48 +24,52 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _agree = true;
   bool _loading = false;
 
-  bool get _valid => _name.length > 1 && _email.contains('@') && _pw.length >= 6 && _agree;
+  bool get _valid =>
+      _name.length > 1 && _email.contains('@') && _pw.length >= 6 && _agree;
 
   Future<void> _register() async {
     setState(() => _loading = true);
     try {
-      // 1. Buat akun di Firebase
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _email,
         password: _pw,
       );
       await credential.user?.updateDisplayName(_name);
 
-      // 2. Ambil Firebase ID Token lalu kirim ke backend
       final idToken = await credential.user?.getIdToken();
       if (idToken == null) throw Exception('Gagal mendapatkan token Firebase');
 
       await sl<RegisterWithOtpUsecase>()(idToken);
 
-      // 3. Backend sudah buat user + kirim OTP ke email → ke halaman verifikasi
       if (mounted) context.go('/verify-email');
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Registrasi gagal.'), backgroundColor: AppColors.red),
+          SnackBar(
+              content: Text(e.message ?? 'Registrasi gagal.'),
+              backgroundColor: AppColors.error),
         );
       }
     } on ServerFailure catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message), backgroundColor: AppColors.red),
+          SnackBar(content: Text(e.message), backgroundColor: AppColors.error),
         );
       }
     } on NetworkFailure catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tidak ada koneksi internet.'), backgroundColor: AppColors.red),
+          const SnackBar(
+              content: Text('Tidak ada koneksi internet.'),
+              backgroundColor: AppColors.error),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.red),
+          SnackBar(
+              content: Text(e.toString()), backgroundColor: AppColors.error),
         );
       }
     } finally {
@@ -75,36 +80,56 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                icon: const Icon(DkgIcons.arrowLeft, color: AppColors.ink),
-                onPressed: () => context.go('/'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: GestureDetector(
+                  onTap: () => context.go('/'),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: AppColors.shadowSoft,
+                    ),
+                    child: const Icon(DkgIcons.arrowLeft,
+                        size: 18, color: AppColors.ink),
+                  ),
+                ),
               ),
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(26, 10, 26, 24),
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Buat akun',
-                        style: TextStyle(
-                          fontFamily: 'PlusJakartaSans',
-                          fontSize: 27,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.ink,
-                          letterSpacing: -0.4,
-                        )),
-                    const SizedBox(height: 6),
-                    const Text('Daftar gratis dalam 1 menit',
-                        style: TextStyle(fontSize: 14.5, color: AppColors.slate500)),
-                    const SizedBox(height: 22),
-                    const SizedBox(height: 20),
+                    Text(
+                      'Buat akun baru',
+                      style: GoogleFonts.inter(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.ink,
+                        letterSpacing: -0.6,
+                        height: 1.25,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Daftar gratis dalam 1 menit',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: AppColors.slate500,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
                     AppField(
                       label: 'Nama lengkap',
                       value: _name,
@@ -130,8 +155,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       placeholder: 'Min. 6 karakter',
                       prefixIcon: const Icon(DkgIcons.lock, size: 20),
                       suffixIcon: IconButton(
-                        icon: Icon(_showPw ? DkgIcons.eyeOff : DkgIcons.eye,
-                            size: 20, color: AppColors.slate400),
+                        icon: Icon(
+                            _showPw ? DkgIcons.eyeOff : DkgIcons.eye,
+                            size: 20,
+                            color: AppColors.slate400),
                         onPressed: () => setState(() => _showPw = !_showPw),
                       ),
                     ),
@@ -142,43 +169,60 @@ class _RegisterPageState extends State<RegisterPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
+                            duration: const Duration(milliseconds: 200),
                             width: 22,
                             height: 22,
                             decoration: BoxDecoration(
-                              color: _agree ? AppColors.primary : Colors.white,
+                              gradient: _agree ? AppColors.primaryGradient : null,
+                              color: _agree ? null : Colors.white,
                               borderRadius: BorderRadius.circular(7),
                               border: Border.all(
-                                color: _agree ? AppColors.primary : AppColors.line,
-                                width: 1.6,
+                                color: _agree ? Colors.transparent : AppColors.line,
+                                width: 1.5,
                               ),
+                              boxShadow: _agree
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.primary
+                                            .withValues(alpha: 0.3),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
+                                      )
+                                    ]
+                                  : [],
                             ),
                             child: _agree
-                                ? const Icon(DkgIcons.check, size: 14, color: Colors.white)
+                                ? const Icon(DkgIcons.check,
+                                    size: 14, color: Colors.white)
                                 : null,
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: RichText(
-                              text: const TextSpan(
-                                style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
+                              text: TextSpan(
+                                style: GoogleFonts.inter(
                                   fontSize: 13,
                                   color: AppColors.slate500,
                                   height: 1.5,
                                 ),
                                 children: [
-                                  TextSpan(text: 'Saya setuju dengan '),
+                                  const TextSpan(text: 'Saya setuju dengan '),
                                   TextSpan(
                                     text: 'Syarat & Ketentuan',
-                                    style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
+                                    style: GoogleFonts.inter(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                  TextSpan(text: ' dan '),
+                                  const TextSpan(text: ' dan '),
                                   TextSpan(
                                     text: 'Kebijakan Privasi',
-                                    style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
+                                    style: GoogleFonts.inter(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                  TextSpan(text: '.'),
+                                  const TextSpan(text: '.'),
                                 ],
                               ),
                             ),
@@ -186,27 +230,31 @@ class _RegisterPageState extends State<RegisterPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
                     AppButton(
-                      label: 'Daftar',
+                      label: 'Buat Akun',
                       onPressed: _valid ? _register : null,
                       isLoading: _loading,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Sudah punya akun? ',
-                            style: TextStyle(fontSize: 14, color: AppColors.ink)),
+                        Text(
+                          'Sudah punya akun? ',
+                          style: GoogleFonts.inter(
+                              fontSize: 14, color: AppColors.slate500),
+                        ),
                         GestureDetector(
                           onTap: () => context.go('/login'),
-                          child: const Text('Masuk',
-                              style: TextStyle(
-                                fontFamily: 'PlusJakartaSans',
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                              )),
+                          child: Text(
+                            'Masuk',
+                            style: GoogleFonts.inter(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ],
                     ),

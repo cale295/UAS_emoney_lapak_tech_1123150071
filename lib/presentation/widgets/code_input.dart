@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 
 class CodeInput extends StatefulWidget {
@@ -32,7 +33,8 @@ class _CodeInputState extends State<CodeInput> {
     _focusNode = FocusNode();
     _ctrl = TextEditingController(text: widget.value);
     if (widget.autoFocus) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _focusNode.requestFocus());
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _focusNode.requestFocus());
     }
   }
 
@@ -56,14 +58,12 @@ class _CodeInputState extends State<CodeInput> {
 
   @override
   Widget build(BuildContext context) {
-    const maxBoxSize = 46.0;
-    const horizontalMargin = 4.5;
+    const maxBoxSize = 52.0;
+    const horizontalMargin = 5.0;
 
     return GestureDetector(
       onTap: () {
         if (_focusNode.hasFocus) {
-          // FocusNode masih fokus walau keyboard sudah ditutup user,
-          // requestFocus() jadi no-op → paksa tampilkan keyboard lagi.
           SystemChannels.textInput.invokeMethod('TextInput.show');
         } else {
           _focusNode.requestFocus();
@@ -92,41 +92,55 @@ class _CodeInputState extends State<CodeInput> {
             builder: (context, constraints) {
               final totalMargin = horizontalMargin * 2 * widget.length;
               final available = constraints.maxWidth - totalMargin;
-              final boxSize = (available / widget.length).clamp(0.0, maxBoxSize);
+              final boxSize =
+                  (available / widget.length).clamp(0.0, maxBoxSize);
+              final boxHeight = boxSize > 44 ? 60.0 : boxSize + 12;
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(widget.length, (i) {
                   final filled = i < widget.value.length;
                   final active = i == widget.value.length;
-                  return Container(
+
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     width: boxSize,
-                    height: boxSize > 40 ? 56 : boxSize + 10,
-                    margin: const EdgeInsets.symmetric(horizontal: horizontalMargin),
+                    height: boxHeight,
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: horizontalMargin),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(13),
+                      color: widget.hasError
+                          ? AppColors.errorSurface
+                          : filled
+                              ? AppColors.primarySurface
+                              : Colors.white,
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: widget.hasError
-                            ? AppColors.red
+                            ? AppColors.error
                             : active
                                 ? AppColors.primary
                                 : filled
                                     ? AppColors.primaryBorder
                                     : AppColors.line,
-                        width: 1.6,
+                        width: active || widget.hasError ? 2.0 : 1.5,
                       ),
                       boxShadow: active
-                          ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 0, spreadRadius: 4)]
-                          : [],
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.12),
+                                blurRadius: 0,
+                                spreadRadius: 3,
+                              ),
+                            ]
+                          : AppColors.shadowSoft,
                     ),
                     child: Center(
                       child: filled
                           ? Text(
                               widget.value[i],
-                              style: const TextStyle(
-                                fontFamily: 'PlusJakartaSans',
-                                fontSize: 24,
+                              style: GoogleFonts.inter(
+                                fontSize: 22,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.ink,
                               ),
@@ -134,9 +148,9 @@ class _CodeInputState extends State<CodeInput> {
                           : active
                               ? Container(
                                   width: 2,
-                                  height: 24,
+                                  height: 22,
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary,
+                                    gradient: AppColors.primaryGradient,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 
 class AppLogo extends StatelessWidget {
@@ -10,14 +11,7 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const fontFamily = 'PlusJakartaSans';
-
-    Widget icon = Image.asset(
-      'assets/images/logo-dompet.png',
-      width: size,
-      height: size,
-      fit: BoxFit.contain,
-    );
+    Widget icon = _LogoMark(size: size, light: light);
 
     if (!withText) return icon;
 
@@ -25,36 +19,81 @@ class AppLogo extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         icon,
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Dompet Kampus',
-              style: TextStyle(
-                fontFamily: fontFamily,
-                fontSize: size * 0.3,
-                fontWeight: FontWeight.w800,
+              'TechPay',
+              style: GoogleFonts.inter(
+                fontSize: size * 0.30,
+                fontWeight: FontWeight.w700,
                 color: light ? Colors.white : AppColors.ink,
-                letterSpacing: -0.3,
+                letterSpacing: -0.4,
                 height: 1.05,
               ),
             ),
             Text(
-              'GLOBAL',
-              style: TextStyle(
-                fontFamily: fontFamily,
-                fontSize: size * 0.205,
-                fontWeight: FontWeight.w700,
-                color: light ? Colors.white.withValues(alpha: 0.85) : AppColors.primary,
-                letterSpacing: 1.5,
-                height: 1.05,
+              'Digital Wallet',
+              style: GoogleFonts.inter(
+                fontSize: size * 0.18,
+                fontWeight: FontWeight.w500,
+                color: light
+                    ? Colors.white.withValues(alpha: 0.7)
+                    : AppColors.slate400,
+                letterSpacing: 0.5,
+                height: 1.2,
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _LogoMark extends StatelessWidget {
+  final double size;
+  final bool light;
+
+  const _LogoMark({required this.size, required this.light});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: light
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.white, Color(0xFFEFF6FF)],
+              )
+            : AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(size * 0.28),
+        boxShadow: light
+            ? []
+            : [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+      ),
+      child: Center(
+        child: Text(
+          'T',
+          style: GoogleFonts.inter(
+            fontSize: size * 0.52,
+            fontWeight: FontWeight.w800,
+            color: light ? AppColors.primary : Colors.white,
+            height: 1.0,
+          ),
+        ),
+      ),
     );
   }
 }

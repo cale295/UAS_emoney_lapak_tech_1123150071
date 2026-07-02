@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../blocs/payment/payment_bloc.dart';
@@ -20,9 +21,24 @@ class _TopUpPageState extends State<TopUpPage> {
 
   final _chips = [50000.0, 100000.0, 200000.0, 500000.0, 1000000.0];
   final _methods = [
-    {'id': 'bca', 'name': 'BCA Virtual Account', 'tone': 'blue', 'icon': Icons.account_balance_outlined},
-    {'id': 'card', 'name': 'Kartu Debit/Kredit', 'tone': 'violet', 'icon': Icons.credit_card_outlined},
-    {'id': 'alfa', 'name': 'Alfamart / Indomaret', 'tone': 'red', 'icon': Icons.storefront_outlined},
+    {
+      'id': 'bca',
+      'name': 'BCA Virtual Account',
+      'tone': 'blue',
+      'icon': Icons.account_balance_rounded
+    },
+    {
+      'id': 'card',
+      'name': 'Kartu Debit/Kredit',
+      'tone': 'purple',
+      'icon': Icons.credit_card_rounded
+    },
+    {
+      'id': 'alfa',
+      'name': 'Alfamart / Indomaret',
+      'tone': 'red',
+      'icon': Icons.storefront_rounded
+    },
   ];
 
   @override
@@ -41,7 +57,8 @@ class _TopUpPageState extends State<TopUpPage> {
           });
         } else if (state is PaymentError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: AppColors.red),
+            SnackBar(
+                content: Text(state.message), backgroundColor: AppColors.error),
           );
         }
       },
@@ -56,21 +73,26 @@ class _TopUpPageState extends State<TopUpPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 4, bottom: 10),
-                      child: Text('Nominal top up',
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.slate400,
-                          )),
+                    // ─── Amount Label ─────────────────────────────
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2, bottom: 12),
+                      child: Text(
+                        'Pilih nominal',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.slate400,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                     ),
+
+                    // ─── Amount chips ─────────────────────────────
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      childAspectRatio: 2.5,
+                      childAspectRatio: 2.8,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                       children: _chips.map((c) {
@@ -78,93 +100,119 @@ class _TopUpPageState extends State<TopUpPage> {
                         return GestureDetector(
                           onTap: () => setState(() => _amount = c),
                           child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
+                            duration: const Duration(milliseconds: 200),
                             decoration: BoxDecoration(
-                              color: selected ? AppColors.primarySurface : Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                              gradient: selected
+                                  ? AppColors.primaryGradient
+                                  : null,
+                              color: selected ? null : Colors.white,
+                              borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: selected ? AppColors.primaryLight : AppColors.line,
-                                width: 1.8,
+                                color: selected
+                                    ? Colors.transparent
+                                    : AppColors.line,
+                                width: 1.5,
                               ),
+                              boxShadow: selected
+                                  ? AppColors.shadowPrimary
+                                  : AppColors.shadowSoft,
                             ),
                             child: Center(
-                              child: Text(CurrencyFormatter.format(c),
-                                  style: TextStyle(
-                                    fontFamily: 'PlusJakartaSans',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
-                                    color: selected ? AppColors.primary : AppColors.ink,
-                                  )),
+                              child: Text(
+                                CurrencyFormatter.format(c),
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: selected
+                                      ? Colors.white
+                                      : AppColors.ink,
+                                ),
+                              ),
                             ),
                           ),
                         );
                       }).toList(),
                     ),
+
                     const SizedBox(height: 20),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 4, bottom: 10),
-                      child: Text('Metode pembayaran',
-                          style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.slate400,
-                          )),
+
+                    // ─── Payment methods ──────────────────────────
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2, bottom: 12),
+                      child: Text(
+                        'Metode pembayaran',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.slate400,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
                     ),
+
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: AppColors.shadowSoft,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: AppColors.shadowCard,
                       ),
                       child: Column(
-                        children: _methods.asMap().entries.map((entry) {
-                          final i = entry.key;
-                          final m = entry.value;
-                          final selected = _method == m['id'];
+                        children: _methods.asMap().entries.map((e) {
+                          final i = e.key;
+                          final m = e.value;
+                          final isSelected = _method == m['id'];
                           return Column(
                             children: [
-                              if (i > 0) const Divider(height: 1, indent: 16, color: AppColors.line2),
+                              if (i > 0)
+                                const Divider(
+                                    height: 1, indent: 70, color: AppColors.line2),
                               GestureDetector(
-                                onTap: () => setState(() => _method = m['id'] as String),
+                                onTap: () =>
+                                    setState(() => _method = m['id'] as String),
+                                behavior: HitTestBehavior.opaque,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 14),
                                   child: Row(
                                     children: [
-                                      FeatureIcon(icon: m['icon'] as IconData, tone: m['tone'] as String, size: 42, iconSize: 20),
-                                      const SizedBox(width: 13),
+                                      FeatureIcon(
+                                        icon: m['icon'] as IconData,
+                                        tone: m['tone'] as String,
+                                        size: 42,
+                                        iconSize: 20,
+                                      ),
+                                      const SizedBox(width: 14),
                                       Expanded(
-                                        child: Text(m['name'] as String,
-                                            style: const TextStyle(
-                                              fontFamily: 'PlusJakartaSans',
-                                              fontSize: 14.5,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.ink,
-                                            )),
+                                        child: Text(
+                                          m['name'] as String,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 14.5,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.ink,
+                                          ),
+                                        ),
                                       ),
                                       AnimatedContainer(
-                                        duration: const Duration(milliseconds: 150),
-                                        width: 20,
-                                        height: 20,
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        width: 22,
+                                        height: 22,
                                         decoration: BoxDecoration(
+                                          gradient: isSelected
+                                              ? AppColors.primaryGradient
+                                              : null,
+                                          color: isSelected ? null : Colors.white,
                                           shape: BoxShape.circle,
-                                          color: selected ? AppColors.primary : Colors.white,
                                           border: Border.all(
-                                            color: selected ? AppColors.primary : AppColors.line,
+                                            color: isSelected
+                                                ? Colors.transparent
+                                                : AppColors.line,
                                             width: 2,
                                           ),
                                         ),
-                                        child: selected
-                                            ? Center(
-                                                child: Container(
-                                                  width: 8,
-                                                  height: 8,
-                                                  decoration: const BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              )
+                                        child: isSelected
+                                            ? const Icon(Icons.check_rounded,
+                                                size: 13, color: Colors.white)
                                             : null,
                                       ),
                                     ],
@@ -180,16 +228,21 @@ class _TopUpPageState extends State<TopUpPage> {
                 ),
               ),
             ),
+
+            // ─── CTA Bar ─────────────────────────────────────────
             Container(
-              color: AppColors.bg,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
+              color: Colors.white,
+              padding: EdgeInsets.fromLTRB(
+                  16, 14, 16, MediaQuery.of(context).padding.bottom + 16),
               child: BlocBuilder<PaymentBloc, PaymentState>(
                 builder: (context, state) => AppButton(
-                  label: 'Top Up ${CurrencyFormatter.format(_amount)}',
+                  label: 'Lanjut · ${CurrencyFormatter.format(_amount)}',
+                  onPressed: () => context.go('/pin', extra: {
+                    'kind': 'topup',
+                    'amount': _amount,
+                    'method': _method,
+                  }),
                   isLoading: state is PaymentLoading,
-                  onPressed: () {
-                    context.read<PaymentBloc>().add(PaymentTopupRequested(_amount));
-                  },
                 ),
               ),
             ),
@@ -199,7 +252,6 @@ class _TopUpPageState extends State<TopUpPage> {
     );
   }
 
-  String _methodName() {
-    return _methods.firstWhere((m) => m['id'] == _method)['name'] as String;
-  }
+  String _methodName() =>
+      (_methods.firstWhere((m) => m['id'] == _method)['name'] as String?) ?? '';
 }
