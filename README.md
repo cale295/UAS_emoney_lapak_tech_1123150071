@@ -174,10 +174,7 @@ graph TD
 
 | Login | Dashboard | Profil |
 | :---: | :---: | :---: |
-| ![Login](<img width="390" height="874" alt="Screenshot 2026-07-02 213902" src="https://github.com/user-attachments/assets/e8d1c03a-1749-473c-a5fe-ae218cca161c" />
-) | ![Dashboard](<img width="395" height="882" alt="Screenshot 2026-07-02 221846" src="https://github.com/user-attachments/assets/c2574414-0d20-4e1b-a712-acb4742e1773" />
-) | ![Profil](<img width="385" height="870" alt="Screenshot 2026-07-02 221911" src="https://github.com/user-attachments/assets/1a444ff0-7711-451f-ace8-1611cf744f32" />
-) |
+| ![Login](<img width="390" height="874" alt="Screenshot 2026-07-02 213902" src="https://github.com/user-attachments/assets/e8d1c03a-1749-473c-a5fe-ae218cca161c" />) | ![Dashboard](<img width="395" height="882" alt="Screenshot 2026-07-02 221846" src="https://github.com/user-attachments/assets/c2574414-0d20-4e1b-a712-acb4742e1773" />) | ![Profil](<img width="385" height="870" alt="Screenshot 2026-07-02 221911" src="https://github.com/user-attachments/assets/1a444ff0-7711-451f-ace8-1611cf744f32" />) |
 
 
 ---
