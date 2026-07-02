@@ -36,8 +36,8 @@ Teknologi utama yang digunakan dalam pengembangan aplikasi TechPay:
 | :--- | :--- | :--- |
 | **Framework** | [Flutter](https://flutter.dev/) | Cross-platform mobile UI framework |
 | **Bahasa** | [Dart](https://dart.dev/) | Bahasa pemrograman utama |
-| **Backend & BaaS** | [Supabase](https://supabase.com/) | Autentikasi dan interaksi database |
-| **Database** | PostgreSQL | Relational database (melalui Supabase) |
+| **Backend & BaaS** | [FireBase](https://firebase.google.com/) | Autentikasi dan interaksi database |
+| **Database** | MySQL | Relational database |
 | **Routing** | Go Router | Navigasi deklaratif berbasis URL |
 | **Storage** | Flutter Secure Storage | Penyimpanan lokal terenkripsi untuk Token/PIN |
 | **Integration** | App Links / Deep Link | Komunikasi antar aplikasi Lapak_Tech & TechPay |
