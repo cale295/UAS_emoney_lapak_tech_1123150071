@@ -36,7 +36,7 @@ Teknologi utama yang digunakan dalam pengembangan aplikasi TechPay:
 | :--- | :--- | :--- |
 | **Framework** | [Flutter](https://flutter.dev/) | Cross-platform mobile UI framework |
 | **Bahasa** | [Dart](https://dart.dev/) | Bahasa pemrograman utama |
-| **Backend & BaaS** | [FireBase](https://firebase.google.com/) | Autentikasi dan interaksi database |
+| **Backend & BaaS** | [Firebase](https://firebase.google.com/) | Authentication, Cloud Firestore, dan layanan Backend |
 | **Database** | MySQL | Relational database |
 | **Routing** | Go Router | Navigasi deklaratif berbasis URL |
 | **Storage** | Flutter Secure Storage | Penyimpanan lokal terenkripsi untuk Token/PIN |
@@ -73,15 +73,15 @@ Berikut adalah diagram alur integrasi antara Lapak_Tech dan TechPay saat proses 
 sequenceDiagram
     participant LT as Lapak_Tech (E-Commerce)
     participant TP as TechPay (E-Money)
-    participant SB as Supabase (Backend)
-    
+    participant FB as Firebase (Backend)
+
     LT->>TP: Checkout & Panggil Deep Link (techpay://payment?amount=...)
     activate TP
     TP-->>TP: Tampilkan Detail Pembayaran
     TP->>TP: Validasi PIN Authentication
     TP->>TP: Validasi Two-Factor Authentication (2FA)
-    TP->>SB: Proses Transaksi & Potong Saldo
-    SB-->>TP: Transaksi Sukses
+    TP->>FB: Proses Transaksi & Potong Saldo
+    FB-->>TP: Transaksi Sukses
     TP->>LT: Callback Deep Link (lapaktech://payment-success?trx_id=...)
     deactivate TP
     activate LT
@@ -98,7 +98,7 @@ sequenceDiagram
 3. **Konfirmasi di TechPay**: Aplikasi TechPay terbuka dan menampilkan rincian pembayaran.
 4. **Input PIN**: Pengguna memasukkan PIN TechPay untuk otorisasi awal.
 5. **Verifikasi 2FA**: Pengguna memasukkan kode 2FA (OTP) untuk keamanan tambahan.
-6. **Proses Transaksi**: TechPay memvalidasi saldo dan memproses transaksi ke database Supabase.
+6. **Proses Transaksi**: TechPay memvalidasi saldo dan memproses transaksi melalui Firebase.
 7. **Callback Success**: Setelah sukses, TechPay otomatis mengembalikan pengguna ke Lapak_Tech menggunakan callback URI dengan menyertakan status sukses dan ID transaksi.
 8. **Pesanan Selesai**: Lapak_Tech memperbarui status pesanan menjadi Lunas.
 
@@ -112,7 +112,7 @@ Project ini menggunakan struktur folder terorganisir yang memisahkan logic, UI, 
 lib/
 ├── core/            # Konfigurasi dasar, theme, konstanta, dan error handling
 ├── models/          # Data class dan model serialisasi (JSON)
-├── services/        # Logic API, Supabase, dan integrasi pihak ketiga (DeepLink)
+├── services/        # Logic API, Firebase, dan integrasi pihak ketiga (Deep Link)
 ├── screens/         # Tampilan halaman utama aplikasi (UI)
 ├── widgets/         # Komponen UI yang reusable (tombol, textfield, dll)
 ├── providers/       # State management logic
