@@ -123,31 +123,6 @@ lib/
 
 ---
 
-## 🚀 Instalasi & Menjalankan Project
-
-Ikuti langkah-langkah berikut untuk menjalankan project di perangkat lokal:
-
-1. **Clone repository ini**
-   ```bash
-   git clone https://github.com/username-anda/techpay.git
-   cd techpay
-   ```
-
-2. **Install dependencies**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Siapkan Environment Variables**
-   Buat file `.env` di root directory (sejajar dengan `pubspec.yaml`) dan isi dengan konfigurasi Anda.
-
-4. **Jalankan Aplikasi**
-   ```bash
-   flutter run
-   ```
-
----
-
 ## 🔗 Deep Link Integration
 
 TechPay dirancang untuk menerima request dari luar (Lapak_Tech) menggunakan sistem Deep Link / App Links.
@@ -197,18 +172,12 @@ graph TD
 
 ## 📸 Screenshots
 
-| Login | Dashboard | Payment Confirmation |
+| Login | Dashboard | Profil |
 | :---: | :---: | :---: |
 | ![Login](<img width="390" height="874" alt="Screenshot 2026-07-02 213902" src="https://github.com/user-attachments/assets/e8d1c03a-1749-473c-a5fe-ae218cca161c" />
-) | ![Dashboard]() | ![Payment Confirmation]() |
-
-| PIN Input | 2FA Verification | Transaction Success |
-| :---: | :---: | :---: |
-| ![PIN Input]() | ![2FA Verification]() | ![Transaction Success]() |
-
-| Transaction History | Profile | Settings |
-| :---: | :---: | :---: |
-| ![Transaction History]() | ![Profile]() | ![Settings]() |
+) | ![Dashboard](<img width="395" height="882" alt="Screenshot 2026-07-02 221846" src="https://github.com/user-attachments/assets/c2574414-0d20-4e1b-a712-acb4742e1773" />
+) | ![Profil](<img width="385" height="870" alt="Screenshot 2026-07-02 221911" src="https://github.com/user-attachments/assets/1a444ff0-7711-451f-ace8-1611cf744f32" />
+) |
 
 
 ---
@@ -229,10 +198,6 @@ Fitur yang direncanakan untuk pengembangan ke depan:
 
 ## 👨‍💻 Author
 
-**[Nama Anda]**
-- Email: [Email Anda]
-- GitHub: [@username-anda](https://github.com/username-anda)
-- LinkedIn: [Profil LinkedIn Anda]
+**[Muhammad Vargas Cahyadhi]**
+- Link YT: [https://youtu.be/lbAH9edAh3c]
 
----
-*Dibuat untuk keperluan Tugas Akhir - Universitas / Institusi*
